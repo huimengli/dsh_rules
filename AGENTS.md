@@ -25,11 +25,14 @@
 | `README.md` | 描述项目:目标、背景、使用方式、依赖、目录说明 | Agent 可更新 |
 | `progress.md` | 跨会话进度台账:记录当前状态、已完成、待办、下一步 | Agent 更新 |
 | `tree.md` | 项目结构快照,**只包含非 `.gitignore` 文件** | Agent 更新 |
+| `design.md` | 项目总设计。仅当用户要求“先设计后开工”时创建；每次用户提出新需求时更新版本号, 旧版本备份到`ai_buckup/`中 | Agent 更新 |
 | `todo.md` | 当前待办清单 | Agent 更新 |
 | `records/` | 用户需求记录文件夹 | Agent 写入 |
 | `tests/` | 测试文件夹 | Agent 写入 |
 | `tests/opinion.md` | **多次测试的总结论**(累积) | Agent 更新 |
 | `ai_buckup/` | 超长文件的备份归档目录 | Agent 写入 |
+| `hard_bug.md` | 项目阻塞问题记录；遇到阻塞问题时追加记录 | Agent 更新 |
+| `need_user.md` | 需要用户确认的阻塞问题清单；用户回答并确认解决后，归档到 `ai_buckup/` | Agent 更新 |
 
 > 注意:上表路径均为项目根目录下的相对路径。
 
@@ -82,14 +85,77 @@
 
 ---
 
-## 5. records/(用户需求记录)
+## 5. design.md（项目设计文档）
 
-### 5.1 触发时机
+- 仅当用户明确要求“先设计后开工”时才创建此文件。
+- 文档顶部必须包含：
+  - 当前版本号：`vN.N`，从 `v1.0` 开始递增；
+  - 由Agent判断是否是大小需求变更,更改相应版本号。
+  - 更新时间：`yyyy-MM-dd-hh-mm-ss`；
+  - 关联需求：`records/yyyy-MM-dd-hh-mm-ss.md`。
+- 每次用户提出新需求且影响项目设计时：
+  1. 先将当前 `design.md` 完整快照归档到：
+     `ai_buckup/design.md_yyyy-MM-dd-hh-mm-ss.md`
+  2. 更新当前 `design.md` 的版本号，例如 `v1.0 → v2.0`；
+  3. 在当前 `design.md` 顶部保留归档提示：
+     `<!-- 上一版本已归档于 ai_buckup/design.md_yyyy-MM-dd-hh-mm-ss.md -->`
+  4. 在当前 `design.md` 中追加或修订设计内容；
+  5. 在对应 `records/*.md` 与 `progress.md` 中记录设计版本变更。
+- 本规则明确允许：`design.md` 在旧版本已归档后，可覆盖更新当前文件。
+- 若用户未要求“先设计后开工”，不得创建 `design.md`。
+
+## 5.1 hard_bug.md（项目阻塞问题记录）
+
+- 触发时机：项目遇到阻塞问题，导致无法继续推进、无法按计划完成、或需要重大绕行时，立即写入 `hard_bug.md`。
+- 写入方式：追加，不覆盖已有记录。
+- 建议结构：
+
+```md
+# 阻塞问题记录
+
+## BUG-<编号> <一句话标题>
+
+- 记录时间：yyyy-MM-dd-hh-mm-ss
+- 状态：未解决 / 已解决 / 已绕行
+- 影响范围：
+- 复现 / 现象：
+- 已尝试方案：
+- 根因：
+- 解决方案 / 绕行方案：
+- 关联需求：records/yyyy-MM-dd-hh-mm-ss.md
+- 关联测试：tests/yyyy-MM-dd-hh-mm-ss_cc/
+
+```
+
+---
+
+## 5.2 need_user.md（需要用户确认的阻塞问题）
+
+- 触发时机：项目遇到必须由用户确认才能继续的阻塞问题时，立即写入 `need_user.md`，并在回复中提示用户回答。
+- 文件位置：项目根目录 `need_user.md`。
+- 写入方式：追加新问题，问题编号递增，不覆盖未解决问题。
+- 文件格式固定为 Q/A 配对：
+
+```md
+Q1: 问题1
+- status: wait (agent判断修改)
+A1: (等待用户回答)
+
+Q2:
+- status: down
+A2:
+```
+
+---
+
+## 6. records/(用户需求记录)
+
+### 6.1 触发时机
 用户每提出一次需求,**立即**:
 1. 创建 `records/yyyy-MM-dd-hh-mm-ss.md`(时间戳为需求提出时刻)。
 2. 在 `todo.md` 中追加对应待办项。
 
-### 5.2 records/yyyy-MM-dd-hh-mm-ss.md 结构
+### 6.2 records/yyyy-MM-dd-hh-mm-ss.md 结构
 ```
 # 需求:<一句话标题>
 
@@ -107,24 +173,24 @@
 未开始 / 进行中 / 已完成
 ```
 
-### 5.3 后续关联
+### 6.3 后续关联
 该需求的所有后续修改、讨论、文件变更,都**追加写回同一个文件**,不得另建新文件。
 
-### 5.4 完成
+### 6.4 完成
 任务完成后:
 - 在 `todo.md` 中将对应项勾选为 `[x]`;
 - 在该 record 文件中将「状态」更新为 `已完成`。
 
 ---
 
-## 6. tests/(测试)
+## 7. tests/(测试)
 
-### 6.1 测试轮数约定
+### 7.1 测试轮数约定
 - 若用户明确说明测试则需要运行 **20 轮**。
 - 若用户明确说明**只是验证**,则跑 **3 轮**。
 - 用户另有说明时,以用户说明为准。
 
-### 6.2 目录与文件命名
+### 7.2 目录与文件命名
 每次测试(一个测试批次)创建目录:
 
 ```
@@ -139,7 +205,7 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 - 每轮结果 → `record_index.md`,其中 `index` 为轮次索引(从 1 开始,如 `record_1.md`、`record_2.md` … `record_20.md`)。
 - 该批次结论 → `opinion.md`。
 
-### 6.3 tests/opinion.md(总库)
+### 7.3 tests/opinion.md(总库)
 - 用于记录**多次测试的总结论**,累积写入。
 - 每次测试批次结束后,追加一条:
   ```
@@ -149,7 +215,7 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
   - 相关目录: tests/yyyy-MM-dd-hh-mm-ss_cc/
   ```
 
-### 6.4 每轮记录内容
+### 7.4 每轮记录内容
 `record_index.md` 建议包含:
 ```
 # 第 index / cc 轮
@@ -164,7 +230,7 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 
 ---
 
-## 7. todo.md(待办清单)
+## 8. todo.md(待办清单)
 
 - 用户每次提出需求后,**立即**追加一项:
   ```
@@ -175,7 +241,7 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 
 ---
 
-## 8. 超长文件处理(progress.md / todo.md)
+## 9. 超长文件处理(progress.md / todo.md)
 
 当 `progress.md` 或 `todo.md` **行数 > 100** 时:
 
@@ -198,7 +264,7 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 
 ---
 
-## 9. 会话结束后的 Git 提交描述
+## 10. 会话结束后的 Git 提交描述
 
 - 每次会话结束、或一个可提交的变更单元完成时,Agent 必须**自动生成一条符合 Git 提交规范的 commit 描述**。
 - 规范采用 **Conventional Commits**,格式如下:
@@ -220,10 +286,14 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 
 ---
 
-## 10. 执行检查清单(每次会话)
+## 11. 执行检查清单(每次会话)
 
 - [ ] 是否更新了 `progress.md`?
 - [ ] `tree.md` 是否与当前实际结构一致(仅非 `.gitignore` 文件)?
+- [ ] `design.md` 是否需要创建？版本号是否更新？旧版本是否已归档到 `ai_buckup/design.md_yyyy-MM-dd-hh-mm-ss.md`？
+- [ ] 是否遇到阻塞问题？是否需要写入 `hard_bug.md`？
+- [ ] 是否存在需要用户确认的阻塞问题？是否已写入 `need_user.md` 并提示用户？
+- [ ] 已解决的 `need_user.md` 是否已归档到 `ai_buckup/need_user.md_yyyy-MM-dd-hh-mm-ss.md`？
 - [ ] 新需求是否已写入 `records/` 与 `todo.md`?
 - [ ] 完成的任务是否已在 `todo.md` 勾选、record 状态改为「已完成」?
 - [ ] 测试是否按 20 轮(或验证 3 轮)执行,并写入对应目录与 `tests/opinion.md`?
@@ -233,7 +303,7 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 
 ---
 
-## 11. 禁止事项
+## 12. 禁止事项
 
 - ❌ 修改本文件 `agent_rules.md`。
 - ❌ 用对话内容替代落盘文件。
@@ -241,3 +311,6 @@ tests/yyyy-MM-dd-hh-mm-ss_cc/
 - ❌ 覆盖已有记录文件(应追加)。
 - ❌ 在 `tree.md` 中列出被 `.gitignore` 忽略的文件。
 - ❌ 未归档就删除 `progress.md` / `todo.md` 中的历史内容。
+- ❌ 未归档旧版本就覆盖 `design.md`。
+- ❌ 未将已解决的 `need_user.md` 归档就覆盖或清空。
+- ❌ 在 `need_user.md` 中的阻塞问题未解决时，继续推进相关阻塞任务。
