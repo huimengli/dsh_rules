@@ -138,12 +138,12 @@
 
 ---
 
-5.2 need_user.md（需要用户确认的阻塞问题）
+## 5.2 need_user.md（需要用户确认的阻塞问题）
 
-· 触发时机：项目遇到必须由用户确认才能继续的阻塞问题时，立即写入 need_user.md，并在回复中提示用户回答。
-· 文件位置：项目根目录 need_user.md。
-· 写入方式：追加新问题，问题编号递增，不覆盖未解决问题。
-· 文件格式固定为 Q/A 配对：
+- 触发时机：项目遇到必须由用户确认才能继续的阻塞问题时，立即写入 need_user.md，并在回复中提示用户回答。
+- 文件位置：项目根目录 need_user.md。
+- 写入方式：追加新问题，问题编号递增，不覆盖未解决问题。
+- 文件格式固定为 Q/A 配对：
 
 ```md
 Q1: 问题1
@@ -155,18 +155,18 @@ Q2: 问题2
 A2: 用户已确认的内容
 ```
 
-· status 取值建议：
-  · wait：等待用户回答；
-  · done：用户已确认解决；
-  · closed：已归档。
-· 用户回答并确认解决后，将 need_user.md 归档到：
+- status 取值建议：
+  - wait：等待用户回答；
+  - done：用户已确认解决；
+  - closed：已归档。
+- 用户回答并确认解决后，将 need_user.md 归档到：
   ai_buckup/need_user.md_yyyy-MM-dd-HH-mm-ss.md
 
 ---
 
-6. records/（用户需求记录）
+## 6. records/（用户需求记录）
 
-6.1 触发时机
+### 6.1 触发时机
 
 用户每提出一次需求，立即：
 
@@ -175,7 +175,7 @@ A2: 用户已确认的内容
 
 “需求”指要求项目变更、交付物、文档、代码、测试等实际工作项。普通咨询、闲聊、追问可不创建 record，由 Agent 判断并在回复中说明。
 
-6.2 records/yyyy-MM-dd-HH-mm-ss.md 结构
+### 6.2 records/yyyy-MM-dd-HH-mm-ss.md 结构
 
 ```
 # 需求：<一句话标题>
@@ -194,28 +194,28 @@ A2: 用户已确认的内容
 未开始 / 进行中 / 已完成
 ```
 
-6.3 后续关联
+### 6.3 后续关联
 
 该需求的所有后续修改、讨论、文件变更，都追加写回同一个文件，不得另建新文件。
 
-6.4 完成
+### 6.4 完成
 
 任务完成后：
 
-· 在 todo.md 中将对应项勾选为 [x]；
-· 在该 record 文件中将「状态」更新为 已完成。
+- 在 todo.md 中将对应项勾选为 [x]；
+- 在该 record 文件中将「状态」更新为 已完成。
 
 ---
 
-7. tests/（测试）
+## 7. tests/（测试）
 
-7.1 测试轮数约定
+### 7.1 测试轮数约定
 
-· 若用户明确说明测试，则需要运行 20 轮。
-· 若用户明确说明只是验证，则跑 3 轮。
-· 用户另有说明时，以用户说明为准。
+- 若用户明确说明测试，则需要运行 20 轮。
+- 若用户明确说明只是验证，则跑 3 轮。
+- 用户另有说明时，以用户说明为准。
 
-7.2 目录与文件命名
+### 7.2 目录与文件命名
 
 每次测试（一个测试批次）创建目录：
 
@@ -223,18 +223,18 @@ A2: 用户已确认的内容
 tests/yyyy-MM-dd-HH-mm-ss_cc/
 ```
 
-· yyyy-MM-dd-HH-mm-ss：该次测试批次开始时间。
-· cc：本次测试的轮数（默认 20 或验证场景 3）。
+- yyyy-MM-dd-HH-mm-ss：该次测试批次开始时间。
+- cc：本次测试的轮数（默认 20 或验证场景 3）。
 
 在目录内：
 
-· 每轮结果 → record_index.md，其中 index 为轮次索引（从 1 开始，如 record_1.md、record_2.md … record_20.md）。
-· 该批次结论 → opinion.md。
+- 每轮结果 → record_index.md，其中 index 为轮次索引（从 1 开始，如 record_1.md、record_2.md … record_20.md）。
+- 该批次结论 → opinion.md。
 
-7.3 tests/opinion.md（总库）
+### 7.3 tests/opinion.md（总库）
 
-· 用于记录多次测试的总结论，累积写入。
-· 每次测试批次结束后，追加一条：
+- 用于记录多次测试的总结论，累积写入。
+- 每次测试批次结束后，追加一条：
 
 ```
 ## yyyy-MM-dd-HH-mm-ss_cc
@@ -243,7 +243,7 @@ tests/yyyy-MM-dd-HH-mm-ss_cc/
 - 相关目录: tests/yyyy-MM-dd-HH-mm-ss_cc/
 ```
 
-7.4 每轮记录内容
+### 7.4 每轮记录内容
 
 record_index.md 建议包含：
 
@@ -260,24 +260,27 @@ record_index.md 建议包含：
 
 ---
 
-8. todo.md（待办清单）
+## 8. todo.md（待办清单）
 
-· 用户每次提出需求后，立即追加一项：
+- 用户每次提出需求后，立即追加一项：
 
 ```
 - [ ] yyyy-MM-dd-HH-mm-ss 需求标题 (→ records/yyyy-MM-dd-HH-mm-ss.md)
 ```
 
-· 任务完成后改为 - [x] ...。
-· 行数超过 100 行时，按第 9 节规则归档压缩。
+- 任务完成后改为 - [x] ...。
+- 行数超过 100 行时，按第 9 节规则归档压缩。
 
 ---
 
-9. 超长文件处理（progress.md / todo.md）
+## 9. 超长文件处理
 
-当 progress.md 或 todo.md 行数 > 100 时：
+- 当 progress.md 或 todo.md 行数 > 100 时
+- 当 design.md 行数 > 1000 或者 用户提出新的设计要求 时
+- 当 need_user.md 已解决
+- 当 hard_bug.md 已解决
 
-1. 在 ai_buckup/ 下创建备份：
+### 1. 在 ai_buckup/ 下创建备份：
 
 ```
 ai_buckup/<原文件名>_yyyy-MM-dd-HH-mm-ss.md
@@ -285,38 +288,38 @@ ai_buckup/<原文件名>_yyyy-MM-dd-HH-mm-ss.md
 
 备份内容为该文件归档时的完整快照。
 
-2. 对原文件执行以下二选一处理（由 Agent 判断，优先保留信息密度高、仍有效的内容）：
+### 2. 对原文件执行以下二选一处理（由 Agent 判断，优先保留信息密度高、仍有效的内容）：
 
-· compact（压缩）：合并同类项、删除过期项，保留仍有效的关键内容；
-· 抽取最新：仅保留最新且仍未完成/仍未失效的内容。
+- compact（压缩）：合并同类项、删除过期项，保留仍有效的关键内容；
+- 抽取最新：仅保留最新且仍未完成/仍未失效的内容。
 
-3. 在原文件顶部保留一行归档提示：
+### 3. 在原文件顶部保留一行归档提示：
 
 ```
 <!-- 已归档于 ai_buckup/<备份文件名> -->
 ```
 
-4. 归档动作须在本文件对应的 records/*.md 或 progress.md 中记录一笔，便于追溯。
+### 4. 归档动作须在本文件对应的 records/*.md 或 progress.md 中记录一笔，便于追溯。
 
 ---
 
-10. Git 提交规则（Agent 自动 commit，禁止 push）
+## 10. Git 提交规则（Agent 自动 commit，禁止 push）
 
-· 每次会话结束、或一个可提交的变更单元完成时，Agent 必须自动生成本地 Git 提交。
-· 允许 Agent 执行：
-  · git status
-  · git diff
-  · git add <本次相关文件>
-  · git commit -m "<符合规范的提交信息>"
-  · git log
-· 严禁 Agent 执行：
-  · git push
-  · git push --force
-  · git remote add
-  · git remote set-url
-  · 任何向远程仓库写入、上传、同步的操作。
+- 每次会话结束、或一个可提交的变更单元完成时，Agent 必须自动生成本地 Git 提交。
+- 允许 Agent 执行：
+  - git status
+  - git diff
+  - git add <本次相关文件>
+  - git commit -m "<符合规范的提交信息>"
+  - git log
+- 严禁 Agent 执行：
+  - git push
+  - git push --force
+  - git remote add
+  - git remote set-url
+  - 任何向远程仓库写入、上传、同步的操作。
 
-10.1 提交前检查
+### 10.1 提交前检查
 
 Agent 在执行 commit 前必须：
 
@@ -325,24 +328,24 @@ Agent 在执行 commit 前必须：
 3. 确认 .gitignore 已排除敏感文件与忽略文件。
 4. 若发现敏感信息，停止提交，并记录到 hard_bug.md 或 need_user.md，同时提示用户。
 
-10.2 提交信息规范
+### 10.2 提交信息规范
 
 规范采用 Conventional Commits，格式如下：
 
 ```
-<type>(<scope>): <subject>
+<type>(AI): <subject>
 
 <body>
 
 <footer>
 ```
 
-· type 取值：feat / fix / docs / style / refactor / test / chore / perf / build / ci。
-· subject 使用中文或英文均可，但需简明扼要，建议不超过 72 字符。
-· body 可选，说明变更原因与影响。
-· footer 可选，用于关联 issue、BREAKING CHANGE 等。
+- type 取值：feat / fix / docs / style / refactor / test / chore / perf / build / ci。
+- subject 使用中文或英文均可，但需简明扼要，建议不超过 40 字符。
+- body 可选，说明变更原因与影响。
+- footer 可选，用于关联 issue、BREAKING CHANGE 等。
 
-10.3 提交后记录
+### 10.3 提交后记录
 
 生成的 commit 描述与结果必须：
 
@@ -359,7 +362,7 @@ docs(progress): 记录本次提交 hash
 
 但该提交同样严禁 push。
 
-10.4 无变更时
+### 10.4 无变更时
 
 若本次会话没有产生可提交的变更，则输出类似：
 
@@ -369,13 +372,13 @@ chore: 无代码变更，仅更新文档/进度
 
 或明确说明「本次无需要提交的变更」。不要创建空提交。
 
-10.5 提交失败时
+### 10.5 提交失败时
 
 若自动 commit 失败，必须将失败原因、执行命令、输出信息记录到 hard_bug.md，并在回复中提示用户。
 
 ---
 
-11. 执行检查清单（每次会话）
+## 11. 执行检查清单（每次会话）
 
 - [ ] 是否更新了 progress.md？
 - [ ] tree.md 是否与当前实际结构一致（仅非 .gitignore 文件）？
@@ -394,16 +397,16 @@ chore: 无代码变更，仅更新文档/进度
 
 ---
 
-12. 禁止事项
+## 12. 禁止事项
 
-· ❌ 修改本文件 AGENTS.md。
-· ❌ 用对话内容替代落盘文件。
-· ❌ 自行更改命名约定或目录结构。
-· ❌ 覆盖已有记录文件（应追加）。
-· ❌ 在 tree.md 中列出被 .gitignore 忽略的文件。
-· ❌ 未归档就删除 progress.md / todo.md 中的历史内容。
-· ❌ 未归档旧版本就覆盖 design.md。
-· ❌ 未将已解决的 need_user.md 归档就覆盖或清空。
-· ❌ 在 need_user.md 中的阻塞问题未解决时，继续推进相关阻塞任务。
-· ❌ 执行 git push 或任何向远程仓库写入的操作。
-· ❌ 将用户敏感信息 commit 到 Git。
+- ❌ 修改本文件 AGENTS.md。
+- ❌ 用对话内容替代落盘文件。
+- ❌ 自行更改命名约定或目录结构。
+- ❌ 覆盖已有记录文件（应追加）。
+- ❌ 在 tree.md 中列出被 .gitignore 忽略的文件。
+- ❌ 未归档就删除 progress.md / todo.md 中的历史内容。
+- ❌ 未归档旧版本就覆盖 design.md。
+- ❌ 未将已解决的 need_user.md 归档就覆盖或清空。
+- ❌ 在 need_user.md 中的阻塞问题未解决时，继续推进相关阻塞任务。
+- ❌ 执行 git push 或任何向远程仓库写入的操作。
+- ❌ 将用户敏感信息 commit 到 Git。
